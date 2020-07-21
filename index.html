@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fibonacci Flower</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+        }
+
+        .controls {
+            position: fixed;
+            right: 0;
+            top: 0;
+        }
+
+        #fibonacci {
+            background: black;
+        }
+    </style>
+</head>
+<body>
+<section class="controls">
+    <label for="maxNumber">MaxNumber</label>
+    <input id="maxNumber" type="range" name="maxNumber" min="500" max="5000" value="0" step="any"/>
+</section>
+<canvas id="fibonacci" width="500px" height="500px"></canvas>
+<script>
+    var maxNumber = 2000;
+    var maxNumberSlider = document.getElementById('maxNumber');
+    var canvas = document.getElementById('fibonacci');
+    var ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    maxNumberSlider.oninput = function () {
+        maxNumber = this.value;
+        resetDrawing();
+    }
+
+    function resetDrawing() {
+        ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        draw(0, 1);
+    }
+
+    function draw(from, to) {
+        var PHI = (1 + Math.sqrt(5)) / 2;
+        var highlightOffset = 1;
+        var highlight = 89;
+
+        for (; from < to; from++) {
+            ctx.save();
+            ctx.beginPath();
+            var dst = Math.pow(from / (maxNumber - 1), .5) * 200;
+            var angle = 2 * Math.PI * PHI * from;
+
+            var x = dst * Math.cos(angle);
+            var y = dst * Math.sin(angle);
+            var radius = 3;
+            var startAngle = 0;
+            var endAngle = 2 * Math.PI;
+            var color = '#fff';
+
+            ctx.arc(x, y, radius, startAngle, endAngle);
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+
+
+            if ((from + highlightOffset) % highlight === 0) {
+                color = '#FFD700'
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else {
+                color = '#ffffff';
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+        }
+
+        if (to < maxNumber) {
+            window.requestAnimationFrame(function () {
+                draw(to, to + 10);
+            });
+        }
+    }
+
+    draw(0, 1);
+</script>
+</body>
+</html>
